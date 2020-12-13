@@ -21,38 +21,38 @@
                                 <table class="table table-striped table-sm">
                                     <thead>
                                         <tr>
-                                            @for ($i = 0; $i <= $graph['n']; $i++)
+                                            @for ($i = 0; $i < $graph['n']+1; $i++)
                                                 <th>{{ $i > 0 ? $i : "" }}</th>
                                             @endfor
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @for ($i = 0; $i < $graph['n']; $i++)
+                                        @for ($i = 1; $i <= $graph['n']; $i++)
                                             <tr>
                                                 @for ($j = 0; $j <= $graph['n']; $j++)
-                                                    <td>{!! $j === 0 ? '<b>' . ($i + 1) . '</b>' : $graph['matrix'][$i][$j - 1] !!}</td>
+                                                    <td>{!! $j === 0 ? '<b>' . $i . '</b>' : $graph['matrix'][$i][$j] !!}</td>
                                                 @endfor
                                             </tr>
                                         @endfor
                                     </tbody>
                                 </table>
                             </div>
-                            @isset($roadMatrix)
-                                <div><strong>Road Matrix</strong></div>
+                            @isset($newMatrix)
+                                <div><strong>Circular Matrix</strong></div>
                                 <div class="table-responsive">
                                     <table class="table table-striped table-sm">
                                         <thead>
                                         <tr>
-                                            @for ($i = 0; $i <= $graph['n']; $i++)
-                                                <th>{{ $i > 0 ? $i : "" }}</th>
+                                            @for ($i = 0; $i <= $graph['v']; $i++)
+                                                <th>{{ $i > 0 ? $i . '(' . $graph['vertices'][$i-1][0] . ',' . $graph['vertices'][$i-1][1] . ')': "" }}</th>
                                             @endfor
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @for ($i = 0; $i < $graph['n']; $i++)
+                                        @for ($i = 1; $i <= $graph['v']; $i++)
                                             <tr>
-                                                @for ($j = 0; $j <= $graph['n']; $j++)
-                                                    <td>{!! $j === 0 ? '<b>' . ($i + 1) . '</b>' : $roadMatrix[$i][$j - 1] !!}</td>
+                                                @for ($j = 0; $j <= $graph['v']; $j++)
+                                                    <td>{!! $j === 0 ? '<b>' . ('(' . $graph['vertices'][$i-1][0] . ',' . $graph['vertices'][$i-1][1] . ')') . '</b>' : $newMatrix[$i][$j] !!}</td>
                                                 @endfor
                                             </tr>
                                         @endfor
@@ -60,29 +60,14 @@
                                     </table>
                                 </div>
                             @endisset
-                            @isset($isClica)
-                                <div><span>Candidate:</span>
-                                @for ($i = 0; $i < count($candidate); $i++)
-                                    {{ $candidate[$i] }}&nbsp;
-                                @endfor
+                            @isset($lenght)
+                                <div>
+                                    <strong>Lungimea arcelor:</strong>
+                                    <span>{{ $lenght }}</span>
                                 </div>
                                 <div>
-                                    <strong>
-                                        @if($isClica === true)
-                                            ESTE CLICA
-                                        @else
-                                            NU ESTE CLICA
-                                        @endif
-                                    </strong>
-                                </div>
-                                <div>
-                                    <strong>
-                                        @if($isClicaMaximala === true)
-                                            ESTE CLICA MAXIMALA
-                                        @else
-                                            NU ESTE CLICA MAXIMALA
-                                        @endif
-                                    </strong>
+                                    <strong>Densitatea:</strong>
+                                    <span>{{ $density }}</span>
                                 </div>
                             @endisset
                         @endif

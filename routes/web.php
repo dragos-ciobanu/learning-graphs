@@ -19,7 +19,10 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/graph', [GraphController::class, 'show']);
+Route::get('/graph/bfs', [GraphController::class, 'showBFS']);
+Route::get('/graph/dfs/{start}', [GraphController::class, 'showDFS']);
+Route::get('/graph/clica', [GraphController::class, 'clica']);
+Route::get('/graph/circle/{start}', [GraphController::class, 'circle']);
 
 Route::get('/welcome', function () {
     return view('welcome');
