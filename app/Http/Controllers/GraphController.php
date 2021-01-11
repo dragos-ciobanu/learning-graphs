@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Graph;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\View\View;
@@ -19,59 +20,12 @@ class GraphController extends Controller
     /**
      * @return Application|Factory|\Illuminate\Contracts\View\View|View
      */
-    public function showBFS()
+    public function showBFS($start = 1)
     {
-        $graph = [
+        $graph = new Graph([
             'n' => 7,
             'v' => 6,
-            'matrix' => [
-                [0, 1, 0, 0, 1, 1, 0],
-                [1, 0, 1, 1, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 1],
-                [0, 0, 0, 0, 0, 1, 0],
-            ]
-        ];
-
-        $queue = [];
-        $visited = [];
-        $start = 0;
-        array_push($queue, $start);
-        array_push($visited, $start);
-        while (count($queue) > 0) {
-            $current = $queue[0];
-            for ($i = 0; $i < $graph['n']; $i++) {
-                //echo $graph['matrix'][$current][$i] . '<br />';
-                if ($graph['matrix'][$current][$i] === 1 && in_array($i, $visited) === false) {
-                    //echo $i . '<br />';
-                    array_push($queue, $i);
-                    array_push($visited, $i);
-                }
-            }
-            array_shift($queue);
-        }
-
-        for ($i = 0; $i < count($visited); $i++) {
-            echo $visited[$i] + 1 . ' ';
-        }
-
-        //return var_export($visited);
-
-        return view('graphs.show', ['graph' => $graph]);
-
-    }
-
-    /**
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
-     */
-    public function showDFS($start = 0)
-    {
-        $graph = [
-            'n' => 7,
-            'v' => 6,
-            'vertices' => [
+            'edges' => [
                 [1, 2],
                 [1, 7],
                 [1, 6],
@@ -80,33 +34,44 @@ class GraphController extends Controller
                 [2, 7],
 
             ]
-            /*
-            'matrix' => [
-                [0, 1, 0, 0, 0, 1, 1],
-                [1, 0, 1, 1, 0, 0, 1],
-                [0, 1, 0, 0, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 1],
-                [7, 1, 0, 0, 0, 1, 0],
-            ]*/
-        ];
+        ]);
 
-        $graph['matrix'] = $this->edgesToMatrix($graph['n'], $graph['v'], $graph['vertices']);
 
-        $this->graph = $graph;
+        $bfsResult = $graph->BFS($start);
 
-        $queue = [];
-        $visited = [];
-
-        $this->dfs($start);
-        var_export($visited);
-
-        for ($i = 0; $i < count($this->visited); $i++) {
-            echo $this->visited[$i] + 1 . ' ';
+        for ($i = 0; $i < count($bfsResult); $i++) {
+            echo $bfsResult[$i] . ' ';
         }
 
-        //return var_export($visited);
+        return view('graphs.show', ['graph' => $graph]);
+    }
+
+    /**
+     * @param int $start
+     * @return Application|Factory|\Illuminate\Contracts\View\View|View
+     */
+    public function showDFS($start = 1)
+    {
+        $graph = new Graph([
+                'n' => 7,
+                'v' => 6,
+                'edges' => [
+                    [1, 2],
+                    [1, 7],
+                    [1, 6],
+                    [2, 3],
+                    [2, 4],
+                    [2, 7],
+
+                ]
+        ]);
+
+
+        $dfsResult = $graph->DFS($start);
+
+        for ($i = 0; $i < count($dfsResult); $i++) {
+            echo $dfsResult[$i] . ' ';
+        }
 
         return view('graphs.show', ['graph' => $graph]);
 

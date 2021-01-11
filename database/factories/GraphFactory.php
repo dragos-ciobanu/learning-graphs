@@ -19,10 +19,14 @@ class GraphFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            //
+            'name' => $this->faker->name,
+            'vertices_count' => 0,
+            'edges_count' => 0,
+            'edges' => [[]],
+            'matrix' => [[]],
         ];
     }
 }

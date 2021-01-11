@@ -8,29 +8,29 @@
                     <div class="card-header">{{ __('Show Graph') }}</div>
 
                     <div class="card-body">
-                        @if ( count($graph) > 0 && count($graph['matrix']) > 0 )
+                        @if ( $graph->getVerticesCount() > 0 )
                             <div>
                                 <strong>{{ __('Nodes') }}</strong>
-                                <em>{{ $graph['n'] }}</em>
+                                <em>{{ $graph->getVerticesCount() }}</em>
                             </div>
                             <div>
                                 <strong>{{ __('Vertices') }}</strong>
-                                <em>{{ $graph['v'] }}</em>
+                                <em>{{ $graph->getEdgesCount() }}</em>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-sm">
                                     <thead>
                                         <tr>
-                                            @for ($i = 0; $i <= $graph['n']; $i++)
+                                            @for ($i = 0; $i <= $graph->getVerticesCount(); $i++)
                                                 <th>{{ $i > 0 ? $i : "" }}</th>
                                             @endfor
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @for ($i = 0; $i < $graph['n']; $i++)
+                                        @for ($i = 1; $i <= $graph->getVerticesCount(); $i++)
                                             <tr>
-                                                @for ($j = 0; $j <= $graph['n']; $j++)
-                                                    <td>{!! $j === 0 ? '<b>' . ($i + 1) . '</b>' : $graph['matrix'][$i][$j - 1] !!}</td>
+                                                @for ($j = 0; $j <= $graph->getVerticesCount(); $j++)
+                                                    <td>{!! $j === 0 ? '<b>' . ($i) . '</b>' : $graph->getMatrix()[$i][$j] !!}</td>
                                                 @endfor
                                             </tr>
                                         @endfor
