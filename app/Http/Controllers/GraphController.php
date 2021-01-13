@@ -18,6 +18,7 @@ class GraphController extends Controller
     private $subsets = [];
 
     /**
+     * @param int $start
      * @return Application|Factory|\Illuminate\Contracts\View\View|View
      */
     public function showBFS($start = 1)
@@ -36,6 +37,9 @@ class GraphController extends Controller
             ]
         ]);
 
+        if ($start < 1 || $start > $graph->getVerticesCount()) {
+            $start = 1;
+        }
 
         $bfsResult = $graph->BFS($start);
 
@@ -43,7 +47,10 @@ class GraphController extends Controller
             echo $bfsResult[$i] . ' ';
         }
 
-        return view('graphs.show', ['graph' => $graph]);
+        return view('graphs.show', [
+            'graph' => $graph,
+            'BFS' => $bfsResult
+        ]);
     }
 
     /**
@@ -66,6 +73,9 @@ class GraphController extends Controller
                 ]
         ]);
 
+        if ($start < 1 || $start > $graph->getVerticesCount()) {
+            $start = 1;
+        }
 
         $dfsResult = $graph->DFS($start);
 
@@ -78,10 +88,10 @@ class GraphController extends Controller
     }
 
     public function circle($start = 1) {
-        $graph = [
+        $graph = new Graph([
             'n' => 14,
             'v' => 7,
-            'vertices' => [
+            'edges' => [
                 [1, 5],
                 [2, 12],
                 [3, 7],
@@ -90,22 +100,19 @@ class GraphController extends Controller
                 [8, 14],
                 [10, 13]
             ]
-        ];
-        $graph['matrix'] = $this->edgesToMatrixFromOne($graph['n'], $graph['v'], $graph['vertices']);
+        ]);
 
-        $this->graph = $graph;
-        $newNodes = [];
         $newGraph = [];
-        $vertices = $this->graph['vertices'];
-        var_export($vertices);
+        $edges = $graph->getEdges();
+        var_export($edges);
         $lenght = 0;
-        for ($i = 0; $i < count($vertices); $i++) {
-            $e1n1 = $vertices[$i][0];
-            $e1n2 = $vertices[$i][1];
+        for ($i = 0; $i < count($edges); $i++) {
+            $e1n1 = $edges[$i][0];
+            $e1n2 = $edges[$i][1];
             $lenght += $e1n2 - $e1n1;
-            for ($j = $i+1; $j < count($vertices); $j++) {
-                $e2n1 = $vertices[$j][0];
-                $e2n2 = $vertices[$j][1];
+            for ($j = $i+1; $j < count($edges); $j++) {
+                $e2n1 = $edges[$j][0];
+                $e2n2 = $edges[$j][1];
                 if (
                     ($e2n1 > $e1n1 && $e2n1 < $e1n2 && $e2n2 > $e1n2)
                 ) {
@@ -114,9 +121,9 @@ class GraphController extends Controller
             }
         }
 
-        $newMatrix = $this->edgesToMatrixFromOne(count($vertices), count($newGraph), $newGraph);
+        $newMatrix = $this->edgesToMatrixFromOne(count($edges), count($newGraph), $newGraph);
         $density = 0;
-        for ($i = 1; $i < count($vertices); $i++) {
+        for ($i = 1; $i < count($edges); $i++) {
             $grad = array_sum($newMatrix[$i]);
             if ($density < $grad) {
                 $density = $grad;
@@ -130,9 +137,6 @@ class GraphController extends Controller
                 'newMatrix' => $newMatrix,
                 'lenght' => $lenght,
                 'density' => $density
-//                'isClica' => $isClica,
-//                'isClicaMaximala' => $isClicaMaximala,
-//                'candidate' => $candidate
             ]);
 
 
@@ -199,9 +203,6 @@ class GraphController extends Controller
                 'newMatrix' => $newMatrix,
                 'lenght' => $lenght,
                 'density' => $density
-//                'isClica' => $isClica,
-//                'isClicaMaximala' => $isClicaMaximala,
-//                'candidate' => $candidate
             ]);
 
 
@@ -224,10 +225,10 @@ class GraphController extends Controller
      */
     public function clica()
     {
-        $graph = [
+        $graph = new Graph([
             'n' => 6,
             'v' => 7,
-            'vertices' => [
+            'edges' => [
                 [1, 2],
                 [1, 5],
                 [2, 5],
@@ -235,65 +236,28 @@ class GraphController extends Controller
                 [3, 4],
                 [5, 4],
                 [4, 6],
-
             ]
-            /*
-            'matrix' => [
-                [0, 1, 0, 0, 0, 1, 1],
-                [1, 0, 1, 1, 0, 0, 1],
-                [0, 1, 0, 0, 0, 0, 0],
-                [0, 1, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0],
-                [1, 0, 0, 0, 0, 0, 1],
-                [7, 1, 0, 0, 0, 1, 0],
-            ]*/
-        ];
+        ]);
+
+
         $candidate = [1, 2, 5];
 
-        $graph['matrix'] = $this->edgesToMatrix($graph['n'], $graph['v'], $graph['vertices']);
+        $roadMatrix = $graph->getRoadMatrix();
 
-        $this->graph = $graph;
+        $isClique = $graph->isClique($candidate);
+        $isMaximalClique = $graph->isMaximalClique($candidate);
 
-        $queue = [];
-        $visited = [];
-
-        $roadMatrix = $matrix = array_fill(0, $this->graph['n'], array_fill(0, $this->graph['n'], 0));
-
-
-        for ($i = 0; $i < $this->graph['n']; $i++) {
-            $this->dfs($i);
-            for ($j = 0; $j < count($this->visited); $j++) {
-                if ($i !== $this->visited[$j]) {
-                    $roadMatrix[$i][$this->visited[$j]] = 1;
-                    $roadMatrix[$this->visited[$j]][$i] = 1;
-                }
-            }
-            $this->visited = [];
-
-        }
-
-
-        $isClica = $this->isClica($candidate);
-        $isClicaMaximala = $this->isClicaMaximala($candidate);
-
-
-        for ($i = 0; $i < count($this->visited); $i++) {
-            echo $this->visited[$i] + 1 . ' ';
-        }
-
-
-
-        $all = $this->generateAll(range(1, $this->graph['n']));
-
-
-        echo "<pre>" . var_export($all, true) . "</pre>";
+//        $all = $this->generateAll(range(1, $graph->getVerticesCount()));
+//
+//
+//        echo "<pre>" . var_export($all, true) . "</pre>";
 
         return view('graphs.show',
             [
                 'graph' => $graph,
                 'roadMatrix' => $roadMatrix,
-                'isClica' => $isClica,
-                'isClicaMaximala' => $isClicaMaximala,
+                'isClique' => $isClique,
+                'isMaximalClique' => $isMaximalClique,
                 'candidate' => $candidate
             ]);
 
@@ -324,7 +288,8 @@ class GraphController extends Controller
             array_pop($subset);
         }
     }
-    private function isClica($candidates) {
+    private function isClica($candidates): bool
+    {
         for ($i = 0; $i < count($candidates); $i++) {
             for ($j = $i + 1; $j < count($candidates); $j++) {
                 if ($this->graph['matrix'][$candidates[$i]-1][$candidates[$j]-1] === 0) {
@@ -335,47 +300,8 @@ class GraphController extends Controller
 
         return true;
     }
-    private function isClicaMaximala($candidates) {
-        for ($i = 1; $i <= $this->graph['n']; $i++) {
-            if (in_array($i, $candidates)) continue;
-            if ($this->isClica(array_merge($candidates, [$i]))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    /**
-     * @param $node
-     * @return array
-     */
-    private function dfs($node): void
-    {
-        array_push($this->visited, $node);
-
-        for ($i = 0; $i < $this->graph['n']; $i++) {
-            if ($this->graph['matrix'][$node][$i] === 1 && in_array($i, $this->visited) === false) {
-                $this->dfs($i);
-            }
-        }
-    }
 
     /**
-     * @param $nodes
-     * @param $verticesNo
-     * @param $edges
-     * @return array
-     */
-    private function edgesToMatrix($nodes, $verticesNo, $edges): array
-    {
-        $matrix = array_fill(0, $nodes, array_fill(0, $nodes, 0));
-        for( $i = 0; $i < $verticesNo; $i++) {
-            $matrix[$edges[$i][0] - 1][$edges[$i][1] -1] = 1;
-            $matrix[$edges[$i][1] -1][$edges[$i][0] - 1] = 1;
-        }
-
-        return $matrix;
-    }    /**
      * @param $nodes
      * @param $verticesNo
      * @param $edges

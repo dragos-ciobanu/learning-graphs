@@ -2,18 +2,12 @@
 
 namespace App\Models;
 
+use Error;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Throwable;
 
 class Graph
 {
     use HasFactory;
-
-//    protected $primaryKey = 'id';
-//    protected $attributes = ['vertices_count' => 0, 'edges_count' => 0, 'edges' => '[[]]', 'matrix' => '[[]]', 'user_id' => 1];
-//    protected $fillable = ['name', 'vertices_count', 'edges_count', 'edges', 'matrix'];
-//
-//$table->id();
     /** @var string */
     private $name;
     /** @var integer */
@@ -44,9 +38,14 @@ class Graph
         }
         if (isset($options['edges'])) {
             $this->setEdges($options['edges']);
-        }
-        if (isset($options['matrix'])) {
+            $this->setMatrix($this->getMatrixFromEdges());
+        } elseif (isset($options['matrix'])) {
             $this->setMatrix($options['matrix']);
+            $this->setEdges($this->getEdgesFromMatrix());
+        } else {
+            if ($options['n'] > 0 || $options['v'] > 0) {
+                throw new Error('Graph needs either adjacency matrix or edges to be defined.');
+            }
         }
     }
 
@@ -105,16 +104,18 @@ class Graph
     }
 
     /**
+     * @param int $edgeNo
+     * @return array
+     */
+    public function getEdge(int $edgeNo): array
+    {
+        return $this->edges[$edgeNo];
+    }
+    /**
      * @return mixed
-     * @throws Throwable
      */
     public function getEdges()
     {
-        if (!isset($this->edges)) {
-            throw_if(!isset($this->matrix), new \Exception("The graph has no defined edges or matrix"));
-            $this->edges = $this->getEdgesFromMatrix();
-
-        }
         return $this->edges;
     }
 
@@ -147,15 +148,9 @@ class Graph
 
     /**
      * @return mixed
-     * @throws Throwable
      */
     public function getMatrix(): array
     {
-        if (!isset($this->matrix)) {
-            throw_if(!isset($this->edges), new \Exception("The graph has no defined edges or matrix"));
-            $this->matrix = $this->getMatrixFromEdges();
-        }
-
         return $this->matrix;
     }
 
@@ -188,9 +183,9 @@ class Graph
     /** Graph Operations
      * @param int $start
      * @return array
-     * @throws Throwable
      */
-    public function BFS($start = 1) {
+    public function BFS($start = 1): array
+    {
         $queue = [];
         $visited = [];
         array_push($queue, $start);
@@ -211,12 +206,13 @@ class Graph
 
     /** Graph Operations
      * @param int $start
-     * @return array|mixed|null
+     * @return array
      */
-    public function DFS($start = 1) {
+    public function DFS($start = 1): array
+    {
         $this->cache = [];
         $this->recursiveDFS($start);
-        $dfsResult = $this->cache;
+        $dfsResult = (array)$this->cache;
         unset($this->cache);
 
         return $dfsResult;
@@ -231,5 +227,60 @@ class Graph
                 $this->recursiveDFS($i);
             }
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getRoadMatrix(): array
+    {
+        $roadMatrix = array_fill(1, $this->getVerticesCount(), array_fill(1, $this->getVerticesCount(), 0));
+
+        for ($i = 1; $i <= $this->getVerticesCount(); $i++) {
+            $dfsResult = $this->DFS($i);
+            for ($j = 0; $j < count($dfsResult); $j++) {
+                if ($i !== $dfsResult[$j]) {
+                    $roadMatrix[$i][$dfsResult[$j]] = 1;
+                    $roadMatrix[$dfsResult[$j]][$i] = 1;
+                }
+            }
+        }
+
+        return $roadMatrix;
+    }
+
+    public function isClique($candidate): bool
+    {
+        for ($i = 0; $i < count($candidate); $i++) {
+            for ($j = $i + 1; $j < count($candidate); $j++) {
+                if (!$this->isConnected($candidate[$i], $candidate[$j])) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public function isMaximalClique($candidate): bool
+    {
+        for ($i = 1; $i <= $this->getVerticesCount(); $i++) {
+            if (in_array($i, $candidate)) continue;
+            if ($this->isClique(array_merge($candidate, [$i]))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param int $vertexA
+     * @param int $vertexB
+     * @return bool
+     */
+    private function isConnected(int $vertexA, int $vertexB): bool
+    {
+        return (bool) $this->matrix[$vertexA][$vertexB];
     }
 }

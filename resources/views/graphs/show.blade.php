@@ -43,16 +43,16 @@
                                     <table class="table table-striped table-sm">
                                         <thead>
                                         <tr>
-                                            @for ($i = 0; $i <= $graph['n']; $i++)
+                                            @for ($i = 0; $i <= $graph->getVerticesCount(); $i++)
                                                 <th>{{ $i > 0 ? $i : "" }}</th>
                                             @endfor
                                         </tr>
                                         </thead>
                                         <tbody>
-                                        @for ($i = 0; $i < $graph['n']; $i++)
+                                        @for ($i = 1; $i <= $graph->getVerticesCount(); $i++)
                                             <tr>
-                                                @for ($j = 0; $j <= $graph['n']; $j++)
-                                                    <td>{!! $j === 0 ? '<b>' . ($i + 1) . '</b>' : $roadMatrix[$i][$j - 1] !!}</td>
+                                                @for ($j = 0; $j <= $graph->getVerticesCount(); $j++)
+                                                    <td>{!! $j === 0 ? '<b>' . $i . '</b>' : $roadMatrix[$i][$j] !!}</td>
                                                 @endfor
                                             </tr>
                                         @endfor
@@ -68,7 +68,7 @@
                                 </div>
                                 <div>
                                     <strong>
-                                        @if($isClica === true)
+                                        @if($isClique === true)
                                             ESTE CLICA
                                         @else
                                             NU ESTE CLICA
@@ -77,7 +77,7 @@
                                 </div>
                                 <div>
                                     <strong>
-                                        @if($isClicaMaximala === true)
+                                        @if($isMaximalClique === true)
                                             ESTE CLICA MAXIMALA
                                         @else
                                             NU ESTE CLICA MAXIMALA
