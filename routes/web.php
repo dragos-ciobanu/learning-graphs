@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 Route::get('/graph/bfs/{start}', [GraphController::class, 'showBFS']);
 Route::get('/graph/dfs/{start}', [GraphController::class, 'showDFS']);
-Route::get('/graph/clica', [GraphController::class, 'clica']);
+Route::get('/graph/clique', [GraphController::class, 'clique']);
 Route::get('/graph/circle/{start}', [GraphController::class, 'circle']);
 
 Route::get('/welcome', function () {

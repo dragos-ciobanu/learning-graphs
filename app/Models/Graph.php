@@ -283,4 +283,34 @@ class Graph
     {
         return (bool) $this->matrix[$vertexA][$vertexB];
     }
+
+    public function getNodesForJS(): array
+    {
+        $nodesWithDegree = [];
+        for ($i = 1; $i <= $this->getVerticesCount(); $i++) {
+            $nodesWithDegree[] = [
+                'id' => $i,
+                'degree' => $this->getVertexDegree($i)
+            ];
+        }
+
+        return $nodesWithDegree;
+    }
+
+    public function getLinksForJS(): array
+    {
+        $links = [];
+        for ($i = 0; $i < $this->getEdgesCount(); $i++) {
+            $links[] = [
+                'source' => $this->getEdges()[$i][0] - 1,
+                'target' => $this->getEdges()[$i][1] - 1,
+            ];
+        }
+
+        return $links;
+    }
+    private function getVertexDegree(int $i)
+    {
+        return array_sum($this->getMatrix()[$i]);
+    }
 }

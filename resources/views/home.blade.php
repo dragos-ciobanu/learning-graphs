@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    {{ __('You are logged in!') }}
+                    {{ __('You are here to learn about graph theory') }}
                 </div>
             </div>
         </div>

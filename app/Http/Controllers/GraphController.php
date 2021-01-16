@@ -104,7 +104,6 @@ class GraphController extends Controller
 
         $newGraph = [];
         $edges = $graph->getEdges();
-        var_export($edges);
         $lenght = 0;
         for ($i = 0; $i < count($edges); $i++) {
             $e1n1 = $edges[$i][0];
@@ -135,8 +134,9 @@ class GraphController extends Controller
             [
                 'graph' => $graph,
                 'newMatrix' => $newMatrix,
-                'lenght' => $lenght,
-                'density' => $density
+                'length' => $lenght,
+                'density' => $density,
+                'isCircleGraph' => true
             ]);
 
 
@@ -223,7 +223,7 @@ class GraphController extends Controller
     /**
      * @return Application|Factory|\Illuminate\Contracts\View\View|View
      */
-    public function clica()
+    public function clique()
     {
         $graph = new Graph([
             'n' => 6,
