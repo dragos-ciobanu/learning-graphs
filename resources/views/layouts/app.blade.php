@@ -101,6 +101,8 @@
             @yield('content')
         </main>
     </div>
-    @include('graphs.input-form')
+    @isset($graph)
+        @include('graphs.input-form')
+    @endisset
 </body>
 </html>

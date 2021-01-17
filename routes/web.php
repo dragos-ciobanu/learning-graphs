@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GraphController;
 use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -33,3 +34,8 @@ Route::get('/welcome', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/{locale}', function ($locale) {
+    App::setLocale($locale);
+    return view('home');
+})->where('locale', 'en|ro');
