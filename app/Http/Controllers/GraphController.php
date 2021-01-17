@@ -23,29 +23,14 @@ class GraphController extends Controller
      */
     public function showBFS($start = 1)
     {
-        $graph = new Graph([
-            'n' => 7,
-            'v' => 6,
-            'edges' => [
-                [1, 2],
-                [1, 7],
-                [1, 6],
-                [2, 3],
-                [2, 4],
-                [2, 7],
-
-            ]
-        ]);
+        $graphData = session('baseGraph');
+        $graph = new Graph($graphData);
 
         if ($start < 1 || $start > $graph->getVerticesCount()) {
             $start = 1;
         }
 
         $bfsResult = $graph->BFS($start);
-
-        for ($i = 0; $i < count($bfsResult); $i++) {
-            echo $bfsResult[$i] . ' ';
-        }
 
         return view('graphs.show', [
             'graph' => $graph,
@@ -59,19 +44,8 @@ class GraphController extends Controller
      */
     public function showDFS($start = 1)
     {
-        $graph = new Graph([
-                'n' => 7,
-                'v' => 6,
-                'edges' => [
-                    [1, 2],
-                    [1, 7],
-                    [1, 6],
-                    [2, 3],
-                    [2, 4],
-                    [2, 7],
-
-                ]
-        ]);
+        $graphData = session('baseGraph');
+        $graph = new Graph($graphData);
 
         if ($start < 1 || $start > $graph->getVerticesCount()) {
             $start = 1;
@@ -79,28 +53,16 @@ class GraphController extends Controller
 
         $dfsResult = $graph->DFS($start);
 
-        for ($i = 0; $i < count($dfsResult); $i++) {
-            echo $dfsResult[$i] . ' ';
-        }
-
-        return view('graphs.show', ['graph' => $graph]);
+        return view('graphs.show', [
+            'graph' => $graph,
+            'DFS' => $dfsResult
+        ]);
 
     }
 
     public function circle($start = 1) {
-        $graph = new Graph([
-            'n' => 14,
-            'v' => 7,
-            'edges' => [
-                [1, 5],
-                [2, 12],
-                [3, 7],
-                [4, 9],
-                [6, 11],
-                [8, 14],
-                [10, 13]
-            ]
-        ]);
+        $graphData = session('circularGraph');
+        $graph = new Graph($graphData);
 
         $newGraph = [];
         $edges = $graph->getEdges();
@@ -143,25 +105,8 @@ class GraphController extends Controller
     }
 
     public function chord() {
-        $graph = [
-            'n' => 7,
-            'v' => 11,
-            'vertices' => [
-                [1, 2],
-                [1, 5],
-                [2, 3],
-                [2, 5],
-                [2, 6],
-                [3, 4],
-                [3, 6],
-                [3, 7],
-                [4, 7],
-                [5, 6],
-                [6, 7],
-
-            ]
-        ];
-        $graph['matrix'] = $this->edgesToMatrixFromOne($graph['n'], $graph['v'], $graph['vertices']);
+        $graphData = session('circularGraph');
+        $graph = new Graph($graphData);
 
         $this->maximumCardinalitySearch($graph);
 
@@ -225,27 +170,15 @@ class GraphController extends Controller
      */
     public function clique()
     {
-        $graph = new Graph([
-            'n' => 6,
-            'v' => 7,
-            'edges' => [
-                [1, 2],
-                [1, 5],
-                [2, 5],
-                [2, 3],
-                [3, 4],
-                [5, 4],
-                [4, 6],
-            ]
-        ]);
+        $graphData = session('baseGraph');
+        $graph = new Graph($graphData);
 
-
-        $candidate = [1, 2, 5];
+        $candidate = session('candidate');
 
         $roadMatrix = $graph->getRoadMatrix();
 
         $isClique = $graph->isClique($candidate);
-        $isMaximalClique = $graph->isMaximalClique($candidate);
+        $isMaximalClique = $isClique && $graph->isMaximalClique($candidate);
 
 //        $all = $this->generateAll(range(1, $graph->getVerticesCount()));
 //

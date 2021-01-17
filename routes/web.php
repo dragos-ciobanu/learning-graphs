@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GraphController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,10 +20,11 @@ Route::get('/', function () {
     return view('home');
 });
 
-Route::get('/graph/bfs/{start}', [GraphController::class, 'showBFS']);
-Route::get('/graph/dfs/{start}', [GraphController::class, 'showDFS']);
-Route::get('/graph/clique', [GraphController::class, 'clique']);
-Route::get('/graph/circle/{start}', [GraphController::class, 'circle']);
+Route::match(['get', 'post'],'/graph/bfs/{start?}', [GraphController::class, 'showBFS'])->middleware('graph.populate');
+Route::match(['get', 'post'],'/graph/dfs/{start?}', [GraphController::class, 'showDFS'])->middleware('graph.populate');
+Route::match(['get', 'post'],'/graph/clique', [GraphController::class, 'clique'])->middleware('graph.populate');
+Route::match(['get', 'post'],'/graph/circle/{start?}', [GraphController::class, 'circle'])->middleware('graph.populate');
+Route::get('/reset', [HomeController::class, 'reset']);
 
 Route::get('/welcome', function () {
     return view('welcome');

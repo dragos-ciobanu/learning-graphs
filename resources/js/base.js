@@ -131,7 +131,7 @@ function restart() {
         .attr("x", 0)
         .attr("y", 4)
         .text(function (d) {
-            return d.id + ' - ' + d.degree;
+            return d.id;// + ' - ' + d.degree;
         });
 
     vertices = g.merge(vertices);

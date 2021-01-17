@@ -6,36 +6,18 @@
         const nodes = @json($graph->getNodesForJS(), JSON_PRETTY_PRINT);
         const links = @json($graph->getLinksForJS(), JSON_PRETTY_PRINT);
         const isCircleGraph = false;
-        //
-        // var nodes = [
-        //     { id: 1, degree: 4 },
-        //     { id: 2, degree: 4 },
-        //     { id: 3, degree: 4 },
-        //     { id: 4, degree: 4 },
-        //     { id: 5, degree: 4 },
-        //     { id: 6, degree: 4 }
-        // ];
-        //
-        // var links = [
-        //     { source: 0, target: 1 },
-        //     { source: 0, target: 2 },
-        //     { source: 0, target: 3 },
-        //     { source: 0, target: 4 },
-        //     { source: 1, target: 2 },
-        //     { source: 2, target: 3 },
-        //     { source: 3, target: 4 },
-        //     { source: 4, target: 1 },
-        //     { source: 5, target: 1 },
-        //     { source: 5, target: 2 },
-        //     { source: 5, target: 3 },
-        //     { source: 5, target: 4 }
-        // ];
     </script>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Show Graph') }}</div>
+                    <div class="card-header">
+                        <span class="col-md-5">{{ __('Show Graph') }}</span>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary col-md-3 float-right" data-toggle="modal" data-target="#graphForm">
+                            {{__('Add new graph')}}
+                        </button>
+                    </div>
                     <div id="app-container" class="container hidden">
                         <div class="row">
                             <div id="app-area" class="col-md-8 col-sm-12">
@@ -45,6 +27,26 @@
                     </div>
                     <div class="card-body">
                         @if ( $graph->getVerticesCount() > 0 )
+                            @isset ($BFS)
+                                <div>
+                                    <strong>{{ __('BFS') }}</strong>
+                                    <em>
+                                        @foreach( $BFS as $node)
+                                            {{ $node }}
+                                        @endforeach
+                                    </em>
+                                </div>
+                            @endisset
+                            @isset ($DFS)
+                                <div>
+                                    <strong>{{ __('DFS') }}</strong>
+                                    <em>
+                                        @foreach( $DFS as $node)
+                                            {{ $node }}
+                                        @endforeach
+                                    </em>
+                                </div>
+                            @endisset
                             <div>
                                 <strong>{{ __('Nodes') }}</strong>
                                 <em>{{ $graph->getVerticesCount() }}</em>
@@ -96,7 +98,7 @@
                                     </table>
                                 </div>
                             @endisset
-                            @isset($isClica)
+                            @isset($isClique)
                                 <div><span>Candidate:</span>
                                 @for ($i = 0; $i < count($candidate); $i++)
                                     {{ $candidate[$i] }}&nbsp;

@@ -45,14 +45,14 @@
                         <div class="dropdown-menu" aria-labelledby="dropdown04">
                             <a class="dropdown-item" href="{{ url('/graph/bfs/1') }}">{{ __('BFS') }}</a>
                             <a class="dropdown-item" href="{{ url('/graph/dfs/1') }}">{{ __('DFS') }}</a>
-                            <a class="dropdown-item" href="{{ url('/graph/dfs/1') }}">{{ __('TBD') }}</a>
+{{--                            <a class="dropdown-item" href="{{ url('/graph/dfs/1') }}">{{ __('TBD') }}</a>--}}
                         </div>
                     </li>
                     <li class="nav-item dropdown {{ Request::is('graph/c*') ? 'active' : '' }}">
                         <a class="nav-link dropdown-toggle" href="{{ url('/graph/clique') }}" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ __('Clique') }}</a>
                         <div class="dropdown-menu" aria-labelledby="dropdown04">
                             <a class="dropdown-item" href="{{ url('/graph/clique') }}">{{ __('Intro') }}</a>
-                            <a class="dropdown-item" href="{{ url('/graph/dfs/1') }}">{{ __('Generate') }}</a>
+{{--                            <a class="dropdown-item" href="{{ url('/graph/dfs/1') }}">{{ __('Generate') }}</a>--}}
                             <a class="dropdown-item" href="{{ url('/graph/circle/1/') }}">{{ __('Circle') }}</a>
                         </div>
                     </li>
@@ -101,6 +101,6 @@
             @yield('content')
         </main>
     </div>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    @include('graphs.input-form')
 </body>
 </html>

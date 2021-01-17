@@ -35,7 +35,13 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">{{ __('Show Graph') }}</div>
+                    <div class="card-header">
+                        <span class="col-md-5">{{ __('Show Graph') }}</span>
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-primary col-md-3 float-right" data-toggle="modal" data-target="#graphForm">
+                            {{__('Add new graph')}}
+                        </button>
+                    </div>
                     <div id="app-container" class="container hidden">
                         <div class="row">
                             <div id="app-area" class="col-md-8 col-sm-12">
