@@ -118,6 +118,4 @@ function restart() {
     vertices = g.merge(vertices);
 }
 
-console.log('what Circle?');
-
 restart();
