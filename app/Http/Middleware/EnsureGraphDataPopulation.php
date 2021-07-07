@@ -33,7 +33,7 @@ class EnsureGraphDataPopulation
                 [10, 13]
             ]
         ];
-    private $candidate = [1, 2, 5];
+    private $cliqueCandidate = [1, 2, 3];
     /**
      * Handle an incoming request.
      *
@@ -45,7 +45,7 @@ class EnsureGraphDataPopulation
     {
         $baseGraph = $this->baseGraph;
         $circularGraph = $this->circleGraph;
-        $candidate = $this->candidate;
+        $cliqueCandidate = $this->cliqueCandidate;
 
         if ($request->input('savethisgraph')) {
             $vertexNo = $request->input('vertexNo');
@@ -70,9 +70,12 @@ class EnsureGraphDataPopulation
                     'edges' => $edges
                 ];
             }
-            $candidate = $request->input('candidate');
-            $candidate = explode(' ', trim(preg_replace('/\s+^\n/', ' ', $candidate)));
-            $request->session()->put('candidate', $candidate);
+            if ($request->input('candidate')) {
+                $candidate = $request->input('candidate');
+                var_export($candidate);
+                $candidate = explode(' ', trim(preg_replace('/\s+^\n/', ' ', $candidate)));
+                $request->session()->put('candidate', $candidate);
+            }
             $request->session()->put('baseGraph', $baseGraph);
             $request->session()->put('circularGraph', $circularGraph);
         } else {
@@ -82,8 +85,8 @@ class EnsureGraphDataPopulation
             if (!$request->session()->has('circularGraph')) {
                 $request->session()->put('circularGraph', $circularGraph);
             }
-            if (!$request->session()->has('candidate')) {
-                $request->session()->put('candidate', $candidate);
+            if (empty($request->session()->has('candidate'))) {
+                $request->session()->put('candidate', $cliqueCandidate);
             }
         }
 
