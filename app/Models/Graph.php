@@ -180,7 +180,7 @@ class Graph
         return $matrix;
     }
 
-    /** Graph Operations
+    /** Graph Operations - BFS
      * @param int $start
      * @return array
      */

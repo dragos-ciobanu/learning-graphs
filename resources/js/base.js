@@ -28,6 +28,7 @@ if (isCircleGraph === false) {
         d.y = centerY + radius * Math.sin(-angle*Math.PI*i/180);
     });
 }
+
 var svg = d3
     .select("#svg-wrap")
     .append("svg")
