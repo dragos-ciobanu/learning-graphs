@@ -11,6 +11,7 @@ svg {
     cursor: crosshair;
     display: block;
     margin: auto;
+    border: 1px solid black;
 }
 
 .edge {
@@ -49,3 +50,19 @@ svg {
     font-weight: bold;
     stroke: none;
 }
+
+.link {
+    stroke: #000;
+    stroke-width: 1.5px;
+}
+
+.node {
+    cursor: move;
+    stroke: #000;
+    stroke-width: 1.5px;
+}
+
+.node.fixed {
+    fill: #f00;
+}
+
