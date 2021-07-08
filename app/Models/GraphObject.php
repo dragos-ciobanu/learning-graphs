@@ -29,7 +29,7 @@ class GraphObject extends Model
     public function __construct($options)
     {
         if (isset($options['name'])) {
-            $this->setVerticesCount($options['name']);
+            $this->setName($options['name']);
         }
         if (isset($options['n'])) {
             $this->setVerticesCount($options['n']);
@@ -121,6 +121,18 @@ class GraphObject extends Model
     }
 
     /**
+     * @return array
+     */
+    public function getVertices()
+    {
+        $vertices = [];
+        for ($i = 1; $i <= $this->vertices_count; $i++) {
+            $vertices[] = ['id' => $i];
+        }
+
+        return $vertices;
+    }
+    /**
      * @param mixed $edges
      * @return GraphObject
      */
@@ -136,7 +148,7 @@ class GraphObject extends Model
     private function getEdgesFromMatrix(): array
     {
         $edges = [];
-        for ($i = 1; $i < $this->vertices_count; $i++) {
+        for ($i = 1; $i <= $this->vertices_count; $i++) {
             for ($j = $i + 1; $j <= $this->vertices_count; $j++) {
                 if ($this->matrix[$i][$j]) {
                     array_push($edges, [$i, $j]);
@@ -313,5 +325,12 @@ class GraphObject extends Model
     private function getVertexDegree(int $i)
     {
         return array_sum($this->getMatrix()[$i]);
+    }
+
+    public function getArrayToModel()
+    {
+        return [
+
+        ];
     }
 }

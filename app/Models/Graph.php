@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Graph extends Model
 {
@@ -40,9 +41,15 @@ class Graph extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'vertices_count' => 'integer',
+        'edges_count' => 'integer',
+        'vertices' => 'array',
+        'edges' => 'array',
+        'matrix' => 'array',
+
     ];
 
-    public function getArrayFromGraphObject(GraphObject $graphObject) {
+    public static function getArrayFromGraphObject(GraphObject $graphObject) {
         return [
             'name' => $graphObject->getName(),
             'vertices_count' => $graphObject->getVerticesCount(),
@@ -50,7 +57,7 @@ class Graph extends Model
             'vertices' => $graphObject->getVertices(),
             'edges' => $graphObject->getEdges(),
             'matrix' => $graphObject->getMatrix(),
-            'user_id' => $graphObject->getUserId()
+            'user_id' => Auth::id()
         ];
     }
 

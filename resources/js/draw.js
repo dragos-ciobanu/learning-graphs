@@ -7,6 +7,19 @@ const height = Math.min(500, width * 0.6);
 let nodes = [];
 let links = [];
 let nodesCount = 0;
+let stopFormUpdate = false;
+if (typeof nodesLoaded !== "undefined") {
+    nodes = nodesLoaded;
+}
+if (typeof linksLoaded !== "undefined") {
+    links = linksLoaded;
+}
+if (typeof nodesCountLoaded !== "undefined") {
+    nodesCount = nodesCountLoaded;
+}if (typeof isCreate !== "undefined") {
+    stopFormUpdate = true;
+}
+
 const color = d3.scaleOrdinal(d3.schemeCategory10);
 
 {
@@ -24,18 +37,11 @@ const color = d3.scaleOrdinal(d3.schemeCategory10);
 
     let edges = svg
         .append("g")
-        .selectAll(".edge")
-        .data(links)
-        .join("line")
-        .classed("link", true);
+        .selectAll(".edge");
 
     let vertices = svg
         .append("g")
-        .selectAll(".vertex")
-        .data(nodes)
-        .join("circle")
-        .attr("r", rad)
-        .classed("node", true);
+        .selectAll(".vertex");
 
     const simulation = d3
         .forceSimulation()
@@ -226,6 +232,7 @@ const color = d3.scaleOrdinal(d3.schemeCategory10);
     }
 
     function updateForm() {
+        if (stopFormUpdate) return;
         d3.select("#vertices_count").property("value", nodes.length);
         d3.select("#edges_count").property("value", links.length);
         const edges = links.map((link) => link.source.id + " " + link.target.id).join("\n");
@@ -265,6 +272,33 @@ const color = d3.scaleOrdinal(d3.schemeCategory10);
         MathJax.typesetPromise().then(() => {
             document.getElementById("math-output").textContent = v + e;
             MathJax.typesetPromise();
-        }).catch((err) => console.log(err.message));    }
+        }).catch((err) => console.log(err.message));
+    }
+
+    const drawGraph = d3.select("#draw-current-graph");
+        drawGraph.on("click", drawCurrentGraph);
+
+    function drawCurrentGraph() {
+        const nodeNo = parseInt(d3.select("#vertices_count").property("value"));
+        const edges = d3.select("#edges").property("value");
+        const tempNodes = Array.from({length: nodeNo}, (_, i) => ({id: ++i}));
+
+        nodes = tempNodes;
+        restart();
+
+        const tempEdges = edges.split('\n').map((v) => {
+            const targets = v.split(' ');
+            return {
+                source: nodes.find(n => n.id === parseInt(targets[0])),
+                target: nodes.find(n => n.id === parseInt(targets[1]))
+            }
+        });
+
+        links = tempEdges;
+        nodesCount = nodeNo;
+        restart();
+        showGraphLatex();
+    }
+
 
 }

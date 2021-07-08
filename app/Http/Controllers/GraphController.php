@@ -68,10 +68,39 @@ class GraphController extends Controller
             'edges_count' => 'required',
         ]);
 
-        Graph::create($request->all());
+        $graphObject = new GraphObject([
+            'name'  => $request->name,
+            'n'     => intval($request->vertices_count),
+            'v'     => intval($request->edges_count),
+            'edges' => $this->getEdgesArray($request->edges)
+        ]);
+
+        $graphData = Graph::getArrayFromGraphObject($graphObject);
+
+        Graph::create($graphData);
 
         return redirect()->route('graphs.index')
             ->with('success', 'Graph added successfully!');
+    }
+
+    private function getEdgesArray(string $edges)
+    {
+        return array_map(function($val) {
+            $temp = explode(" ", $val);
+            return [
+              intval($temp[0]),
+              intval($temp[1])
+            ];
+        }, explode("\n", $edges));
+    }
+
+    private function getObjectFromModel(Graph $graph) {
+        return new GraphObject([
+            'name'  => $graph->name,
+            'n'     => $graph->vertices_count,
+            'v'     => $graph->edges_count,
+            'edges' => $graph->edges
+        ]);
     }
 
     /**
@@ -80,9 +109,20 @@ class GraphController extends Controller
      * @param Graph $graph
      * @return Application|Factory|View
      */
-    public function show(Graph $graph)
+    public function show(Graph $graph, int $start = 1)
     {
-        return view('graphs.show', compact('graph'));
+        $graphObject = $this->getObjectFromModel($graph);
+
+        if ($start < 1 || $start > $graphObject->getVerticesCount()) {
+            $start = 1;
+        }
+
+        $BFS = $graphObject->BFS($start);
+        $DFS = $graphObject->DFS($start);
+
+
+
+        return view('graphs.show', compact('graph', 'graphObject', 'BFS', 'DFS'));
     }
 
     /**
@@ -93,7 +133,9 @@ class GraphController extends Controller
      */
     public function edit(Graph $graph)
     {
-        return view('graph.edit', compact('graph'));
+        $graphObject = $this->getObjectFromModel($graph);
+
+        return view('graphs.edit', compact('graph', 'graphObject'));
     }
 
     /**
@@ -111,10 +153,17 @@ class GraphController extends Controller
             'edges_count' => 'required',
         ]);
 
+        $graphObject = new GraphObject([
+            'name'  => $request->name,
+            'n'     => intval($request->vertices_count),
+            'v'     => intval($request->edges_count),
+            'edges' => $this->getEdgesArray($request->edges)
+        ]);
 
-        $graph->update($request->all());
+        $graphData = Graph::getArrayFromGraphObject($graphObject);
+        $graph->update($graphData);
 
-        return redirect()->route('graph.index')
+        return redirect()->route('graphs.index')
             ->with('success', 'Graph updated successfully');
     }
 
@@ -128,54 +177,8 @@ class GraphController extends Controller
     {
         $graph->delete();
 
-        return redirect()->route('graph.index')
+        return redirect()->route('graphs.index')
             ->with('success', 'Graph deleted successfully');
-    }
-
-
-
-
-    /**
-     * @param int $start
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
-     */
-    public function showBFS($start = 1)
-    {
-        $graphData = session('baseGraph');
-        $graph = new GraphObject($graphData);
-
-        if ($start < 1 || $start > $graph->getVerticesCount()) {
-            $start = 1;
-        }
-
-        $bfsResult = $graph->BFS($start);
-
-        return view('graphs.show', [
-            'graph' => $graph,
-            'BFS' => $bfsResult
-        ]);
-    }
-
-    /**
-     * @param int $start
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
-     */
-    public function showDFS($start = 1)
-    {
-        $graphData = session('baseGraph');
-        $graph = new GraphObject($graphData);
-
-        if ($start < 1 || $start > $graph->getVerticesCount()) {
-            $start = 1;
-        }
-
-        $dfsResult = $graph->DFS($start);
-
-        return view('graphs.show', [
-            'graph' => $graph,
-            'DFS' => $dfsResult
-        ]);
-
     }
 
     public function circle($start = 1) {

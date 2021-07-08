@@ -8,8 +8,11 @@
                     <div class="card-header">
                         <span class="col-md-5">{{ __('Graphs') }}</span>
                         <!-- Button trigger modal -->
-                        <a href="{{ route('graphs.create') }}" type="button" class="btn btn-primary col-md-3 float-right">
+                        <a href="{{ route('graphs.create') }}" type="button" class="btn btn-primary col-md-3 float-right" style="margin-left: 10px;">
                             {{__('Add graph')}}
+                        </a>
+                        <a href="{{ route('graphs.draw') }}" type="button" class="btn btn-primary col-md-3 float-right">
+                            {{__('Draw graph')}}
                         </a>
                     </div>
                     <div class="card-body">
