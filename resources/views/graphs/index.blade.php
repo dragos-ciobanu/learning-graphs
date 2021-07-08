@@ -42,12 +42,17 @@
                                         <td>{{ $graph->edges_count }}</td>
                                         <td>{{ $graph->user->name }}</td>
                                         <td>
-                                            <form method="post" action="{{ route('graphs.destroy', $graph) }}" class="float-right">
-                                                @method('DELETE')
-                                                @csrf
-                                                <button type="submit" class="btn btn-danger">{{ __('Delete') }}</button>
-                                            </form>&nbsp;
-                                            <a href="{{ route('graphs.edit', $graph) }}" class="btn btn-info float-right" style="margin-right: 10px;">{{ __('Edit') }}</a>
+                                            @guest
+                                                <a href="{{ route('graphs.show', $graph) }}" class="btn btn-info float-right" style="margin-right: 10px;">{{ __('View') }}</a>
+                                            @endguest
+                                            @auth
+                                                <form method="post" action="{{ route('graphs.destroy', $graph) }}" class="float-right">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-danger">{{ __('Delete') }}</button>
+                                                </form>&nbsp;
+                                                <a href="{{ route('graphs.edit', $graph) }}" class="btn btn-info float-right" style="margin-right: 10px;">{{ __('Edit') }}</a>
+                                            @endauth
                                         </td>
                                     </tr>
                                 @endforeach

@@ -55,6 +55,16 @@ class GraphController extends Controller
     }
 
     /**
+     * Show the form for drawing a new resource.
+     *
+     * @return Application|Factory|View
+     */
+    public function play()
+    {
+        return view('graphs.play');
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
