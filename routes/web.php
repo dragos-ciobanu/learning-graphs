@@ -25,9 +25,11 @@ Route::match(['get', 'post'],'/graph/bfs/{start?}', [GraphController::class, 'sh
 Route::match(['get', 'post'],'/graph/dfs/{start?}', [GraphController::class, 'showDFS'])->middleware('graph.populate');
 Route::match(['get', 'post'],'/graph/clique', [GraphController::class, 'clique'])->middleware('graph.populate');
 Route::match(['get', 'post'],'/graph/circle/{start?}', [GraphController::class, 'circle'])->middleware('graph.populate');
-
+Route::match(['get', 'head'],'/graphs/draw', [GraphController::class, 'draw'])->name('graphs.draw');
+Route::match(['get', 'head'],'/graphs/play', [GraphController::class, 'play'])->name('graphs.play');
 
 Route::resource('users', UserController::class);
+Route::resource('graphs', GraphController::class);
 
 
 

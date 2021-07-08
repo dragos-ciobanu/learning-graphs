@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GraphObject;
 use App\Models\Graph;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**
@@ -17,52 +20,180 @@ class GraphController extends Controller
     private $visited = [];
     private $subsets = [];
 
+
     /**
-     * @param int $start
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
+     * Display a listing of the resource.
+     *
+     * @return Application|Factory|\Illuminate\Contracts\View\View
      */
-    public function showBFS($start = 1)
+    public function index()
     {
-        $graphData = session('baseGraph');
-        $graph = new Graph($graphData);
+        $graphs = Graph::latest()->paginate(5);
 
-        if ($start < 1 || $start > $graph->getVerticesCount()) {
-            $start = 1;
-        }
+        return view('graphs.index', compact('graphs'))
+            ->with('i', (request()->input('page', 1) - 1) * 5);
+    }
 
-        $bfsResult = $graph->BFS($start);
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return Application|Factory|View
+     */
+    public function create()
+    {
+        return view('graphs.create');
+    }
 
-        return view('graphs.show', [
-            'graph' => $graph,
-            'BFS' => $bfsResult
+    /**
+     * Show the form for drawing a new resource.
+     *
+     * @return Application|Factory|View
+     */
+    public function draw()
+    {
+        return view('graphs.draw');
+    }
+
+    /**
+     * Show the form for drawing a new resource.
+     *
+     * @return Application|Factory|View
+     */
+    public function play()
+    {
+        return view('graphs.play');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Request $request
+     * @return RedirectResponse
+     */
+    public function store(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required',
+            'vertices_count' => 'required',
+            'edges_count' => 'required',
+        ]);
+
+        $graphObject = new GraphObject([
+            'name'  => $request->name,
+            'n'     => intval($request->vertices_count),
+            'v'     => intval($request->edges_count),
+            'edges' => $this->getEdgesArray($request->edges)
+        ]);
+
+        $graphData = Graph::getArrayFromGraphObject($graphObject);
+
+        Graph::create($graphData);
+
+        return redirect()->route('graphs.index')
+            ->with('success', 'Graph added successfully!');
+    }
+
+    private function getEdgesArray(string $edges)
+    {
+        return array_map(function($val) {
+            $temp = explode(" ", $val);
+            return [
+              intval($temp[0]),
+              intval($temp[1])
+            ];
+        }, explode("\n", $edges));
+    }
+
+    private function getObjectFromModel(Graph $graph) {
+        return new GraphObject([
+            'name'  => $graph->name,
+            'n'     => $graph->vertices_count,
+            'v'     => $graph->edges_count,
+            'edges' => $graph->edges
         ]);
     }
 
     /**
-     * @param int $start
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
+     * Display the specified resource.
+     *
+     * @param Graph $graph
+     * @return Application|Factory|View
      */
-    public function showDFS($start = 1)
+    public function show(Graph $graph, int $start = 1)
     {
-        $graphData = session('baseGraph');
-        $graph = new Graph($graphData);
+        $graphObject = $this->getObjectFromModel($graph);
 
-        if ($start < 1 || $start > $graph->getVerticesCount()) {
+        if ($start < 1 || $start > $graphObject->getVerticesCount()) {
             $start = 1;
         }
 
-        $dfsResult = $graph->DFS($start);
+        $BFS = $graphObject->BFS($start);
+        $DFS = $graphObject->DFS($start);
 
-        return view('graphs.show', [
-            'graph' => $graph,
-            'DFS' => $dfsResult
+
+
+        return view('graphs.show', compact('graph', 'graphObject', 'BFS', 'DFS'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  Graph  $graph
+     * @return Application|Factory|View
+     */
+    public function edit(Graph $graph)
+    {
+        $graphObject = $this->getObjectFromModel($graph);
+
+        return view('graphs.edit', compact('graph', 'graphObject'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param Request $request
+     * @param  Graph  $graph
+     * @return RedirectResponse
+     */
+    public function update(Request $request, Graph $graph): RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required',
+            'vertices_count' => 'required',
+            'edges_count' => 'required',
         ]);
 
+        $graphObject = new GraphObject([
+            'name'  => $request->name,
+            'n'     => intval($request->vertices_count),
+            'v'     => intval($request->edges_count),
+            'edges' => $this->getEdgesArray($request->edges)
+        ]);
+
+        $graphData = Graph::getArrayFromGraphObject($graphObject);
+        $graph->update($graphData);
+
+        return redirect()->route('graphs.index')
+            ->with('success', 'Graph updated successfully');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  Graph  $graph
+     * @return RedirectResponse
+     */
+    public function destroy(Graph $graph): RedirectResponse
+    {
+        $graph->delete();
+
+        return redirect()->route('graphs.index')
+            ->with('success', 'Graph deleted successfully');
     }
 
     public function circle($start = 1) {
         $graphData = session('circularGraph');
-        $graph = new Graph($graphData);
+        $graph = new GraphObject($graphData);
 
         $newGraph = [];
         $edges = $graph->getEdges();
@@ -106,7 +237,7 @@ class GraphController extends Controller
 
     public function chord() {
         $graphData = session('circularGraph');
-        $graph = new Graph($graphData);
+        $graph = new GraphObject($graphData);
 
         $this->maximumCardinalitySearch($graph);
 
@@ -171,7 +302,7 @@ class GraphController extends Controller
     public function clique()
     {
         $graphData = session('baseGraph');
-        $graph = new Graph($graphData);
+        $graph = new GraphObject($graphData);
 
         $candidate = session('candidate');
 

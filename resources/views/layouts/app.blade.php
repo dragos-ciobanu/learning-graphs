@@ -11,6 +11,7 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <script id="MathJax-script" async src="{{ asset('js/mathjax/tex-chtml-full.js') }}"></script>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -23,7 +24,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-dark bg-dark">
             <a class="navbar-brand" href="{{ url('/') }}">
-                {{ config('app.name', 'Laravel') }}
+                {{ config('app.name', 'Learn Graph') }}
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -34,28 +35,29 @@
                     <li class="nav-item{{ Request::is('/') ? 'active' : '' }}">
                         <a class="nav-link" href="{{ url('/') }}">{{ __('Home') }}<span class="sr-only">(current)</span></a>
                     </li>
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="{{ url('/') }}">Link</a>--}}
-{{--                    </li>--}}
-{{--                    <li class="nav-item">--}}
-{{--                        <a class="nav-link" href="{{ url('/') }}">Disabled</a>--}}
-{{--                    </li>--}}
-                    <li class="nav-item dropdown {{ Request::is('graph*') ? 'active' : '' }}">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/graph/bfs/1') }}" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ __('Basic') }}<span class="sr-only">(current)</span></a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown04">
-                            <a class="dropdown-item" href="{{ url('/graph/bfs/1') }}">{{ __('BFS') }}</a>
-                            <a class="dropdown-item" href="{{ url('/graph/dfs/1') }}">{{ __('DFS') }}</a>
-{{--                            <a class="dropdown-item" href="{{ url('/graph/dfs/1') }}">{{ __('TBD') }}</a>--}}
+                    <li class="nav-item {{ Request::is('graphs/12') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ url('/graphs/12') }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ __('Introductiv') }}<span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item {{ Request::is('/graphs') ? 'active' : '' }}">
+                        <a class="nav-link" href="{{ route("graphs.index") }}"  aria-haspopup="true" aria-expanded="false">{{ __('Grafuri') }}</a>
+                    </li>
+                    @guest
+                        <li class="nav-item{{ Request::is('/graphs/play') ? 'active' : '' }}">
+                            <a class="nav-link" href="{{ route('graphs.play') }}">{{ __('Playground') }}<span class="sr-only">(current)</span></a>
+                        </li>
+                    @endguest
+                    @auth
+                    <li class="nav-item dropdown {{ Request::is('graphs/*') ? 'active' : '' }}">
+                        <a class="nav-link dropdown-toggle" href="{{ route('graphs.index') }}" id="dropdown03" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ __('Administration') }}</a>
+                        <div class="dropdown-menu" aria-labelledby="dropdown03">
+                            <a class="dropdown-item" href="{{ route('users.index') }}">{{ __('Users') }}</a>
+                            <a class="dropdown-item" href="{{ route('graphs.index') }}">{{ __('Graphs') }}</a>
+                            <a class="dropdown-item" href="{{ route('graphs.draw') }}">{{ __('Draw graph') }}</a>
+                            <a class="dropdown-item" href="{{ route('graphs.create') }}">{{ __('Add graph') }}</a>
+
                         </div>
                     </li>
-                    <li class="nav-item dropdown {{ Request::is('graph/c*') ? 'active' : '' }}">
-                        <a class="nav-link dropdown-toggle" href="{{ url('/graph/clique') }}" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ __('Clique') }}</a>
-                        <div class="dropdown-menu" aria-labelledby="dropdown04">
-                            <a class="dropdown-item" href="{{ url('/graph/clique') }}">{{ __('Intro') }}</a>
-{{--                            <a class="dropdown-item" href="{{ url('/graph/dfs/1') }}">{{ __('Generate') }}</a>--}}
-                            <a class="dropdown-item" href="{{ url('/graph/circle/1/') }}">{{ __('Circle') }}</a>
-                        </div>
-                    </li>
+                    @endauth
                 </ul>
                 <!-- Right Side Of Navbar -->
                 <ul class="navbar-nav ml-auto">
@@ -79,9 +81,6 @@
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                <a class="dropdown-item" href="{{ route('users.index') }}">
-                                    {{ __('Users') }}
-                                </a>
                                 <a class="dropdown-item" href="{{ route('logout') }}"
                                    onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
@@ -104,7 +103,7 @@
             @yield('content')
         </main>
     </div>
-    @isset($graph)
+    @isset($graph22)
         @include('graphs.input-form')
     @endisset
 </body>

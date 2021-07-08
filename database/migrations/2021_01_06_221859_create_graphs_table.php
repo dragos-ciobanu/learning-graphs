@@ -18,12 +18,14 @@ class CreateGraphsTable extends Migration
             $table->string('name');
             $table->integer('vertices_count');
             $table->integer('edges_count');
+            $table->jsonb('vertices');
             $table->jsonb('edges');
             $table->jsonb('matrix');
             $table->foreignId('user_id');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
+
         });
     }
 

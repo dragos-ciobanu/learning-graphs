@@ -9,7 +9,7 @@
                 </div>
                 <div class="float-right">
                     <a class="btn btn-primary float-right" href="{{route('users.index')}}" title="Go back">
-                        <i class="fas fa-backward ">Go back</i>
+                        <i class="fas fa-backward ">{{ __('Go back') }}</i>
                     </a>
                 </div>
             </div>
@@ -48,7 +48,7 @@
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12">
                     <div class="form-group">
-                        <strong>{{ __('Role') }}:{{$user->role}}</strong>
+                        <strong>{{ __('Role') }}:</strong>
                         <select name="role" class="form-control">
                             <option value="student" @if($user->role == 'student') selected @endif>{{ __('Student') }}</option>
                             <option value="professor" @if($user->role == 'professor') selected @endif>{{ __('Professor') }}</option>
@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="col-xs-12 col-sm-12 col-md-12 text-center">
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="submit" class="btn btn-primary">{{__('Submit')}}</button>
                 </div>
             </div>
         </form>

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\Graph;
+use App\Models\GraphObject;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class GraphFactory extends Factory
@@ -12,7 +12,7 @@ class GraphFactory extends Factory
      *
      * @var string
      */
-    protected $model = Graph::class;
+    protected $model = GraphObject::class;
 
     /**
      * Define the model's default state.
