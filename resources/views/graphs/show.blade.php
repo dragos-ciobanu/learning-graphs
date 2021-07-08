@@ -19,7 +19,7 @@
                         </div>
                         <div class="float-right">
                             <a class="btn btn-primary float-right" href="{{route('graphs.index')}}" title="Go back">
-                                <i class="fas fa-backward ">Go back</i>
+                                <i class="fas fa-backward ">{{ __('Go back') }}</i>
                             </a>
                         </div>
                     </div>
@@ -58,7 +58,7 @@
                                 <em>{{ $graphObject->getVerticesCount() }}</em>
                             </div>
                             <div>
-                                <strong>{{ __('Vertices') }}</strong>
+                                <strong>{{ __('Edges') }}</strong>
                                 <em>{{ $graphObject->getEdgesCount() }}</em>
                             </div>
                             <div class="table-responsive">

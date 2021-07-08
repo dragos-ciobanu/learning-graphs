@@ -11,10 +11,10 @@
                 </div>
                 <div class="float-right">
                     <button class="btn btn-primary float-right" style="margin-left: 10px;" id="clear-graph" title="Clear">
-                        <i class="fas fa-backward ">Clear</i>
+                        <i class="fas fa-backward ">{{ __('Delete') }}</i>
                     </button>
                     <a class="btn btn-primary float-right" href="{{route('graphs.index')}}" title="Go back">
-                        <i class="fas fa-backward ">Go back</i>
+                        <i class="fas fa-backward ">{{ __('Go back') }}</i>
                     </a>
                 </div>
             </div>
